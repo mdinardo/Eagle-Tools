@@ -1,0 +1,88 @@
+#usage "<b>Create a wire box with an anchor point (x1, y1) and center point (cx, cy)</b>\n"
+"<p>"
+"Syntax:  abox [R] x1 y1 [cx cy]"
+"<p>"
+"Width and height are mandatory parameters."
+"<p>"
+"Include the R flag to make all coordinates relative to the mark."
+"<p>"
+"The center coordinate may be omitted; it will default to (0 0) (or (R0 0) if the relative flag is set)."
+"<p>"
+"Example: Wire box with anchor point at (1 2), center at default (0 0):   abox 1 2"
+"<p>"
+"Example: Wire box relative to mark, with anchor point at (R3 4) centered at (R5 6):  abox R 3 4 5 6"
+
+
+//output("/tmp/ulp_output.txt") {
+    
+    real x1 = 0, y1 = 0;
+    real x2 = 0, y2 = 0;
+    real cx = 0, cy = 0;
+
+    //dimension index, position index
+    int d_index = 0, p_index = 0;
+    int relative = 0;
+
+    // Relative flag set
+    if (argc == 4 || argc == 6) {
+        int res = strstr("R", strupr(argv[1]));
+        if (-1 != res) {relative = 1;}
+        else {
+            string s = "";
+            sprintf(s, "Invalid parameter: %s", argv[1]);
+	  dlgMessageBox(s);
+            exit(1);
+        }
+        
+        d_index = 2;
+        
+        if (argc == 6) {
+            p_index = 4;
+        }
+    }
+    
+    else if (argc == 3 || argc == 5) {
+        d_index = 1;
+
+        if (argc == 5) {
+            p_index = 3;
+        }
+    }
+
+    else {
+        dlgMessageBox("Incorrect number of arguments","Ok");
+        exit(1);
+    }
+
+    x1 = strtod(argv[d_index]);
+    y1 = strtod(argv[d_index + 1]);
+
+    if (p_index) {
+        cx = strtod(argv[p_index]);
+        cy = strtod(argv[p_index + 1]);
+    }
+
+    //compute other coordinate
+    x2 = x1 + 2.0*(cx - x1);    
+    y2 = y1 + 2.0*(cy - y1);
+
+    string s = "";
+    string fmt = "";
+
+    if (relative) {
+        fmt = "WIRE (R%f %f) (R%f %f) (R%f %f) (R%f %f) (R%f %f);";
+    }
+    else {
+        fmt = "WIRE (%f %f) (%f %f) (%f %f) (%f %f) (%f %f);";
+    }
+    sprintf(s, fmt,
+       x1, y1,
+       x1, y2,
+       x2, y2,
+       x2, y1,
+       x1, y1
+    );
+    
+    exit(s);
+//}
+
