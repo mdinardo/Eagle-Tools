@@ -1,0 +1,6 @@
+enum {
+	False = 0,
+	FALSE = 0,
+	True = 1,
+	TRUE = 1
+}

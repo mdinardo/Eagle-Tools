@@ -1,3 +1,9 @@
+#usage "Unit helper API\n"
+	"<p>"
+	"Defines convenient unit enums and conversion functions between arbitrary units."
+	"<p>"
+	"This ULP is meant to be a helper to other ULPs; running it will do nothing."
+
 enum {
     UNIT_NONE = 0,
     UNIT_MIC = GRID_UNIT_MIC,
