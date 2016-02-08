@@ -1,0 +1,66 @@
+/*
+ * Vector object type hack.
+ * Uses
+ */
+#include "unit.ulp"
+
+UL_RECTANGLE vector_create(real x1, real y1, real x2, real y2, int unit) {
+	UL_RECTANGLE v;
+	
+	v.layer = unit;
+
+	v.x1 = unit_x2u(x1, unit);
+	v.x2 = unit_x2u(x2, unit);
+	v.y1  = unit_x2u(y1, unit);
+	v.y2 = unit_x2u(y2, unit);
+
+}
+
+UL_RECTANGLE vector_add(UL_RECTANGLE v1, UL_RECTANGLE v2) {
+	UL_RECTANGLE v3;
+	v3.x1 = v1.x1 + v2.x1;
+	v3.x2 = v1.x2 + v2.x2;
+	v3.y1 = v1.y1 + v1.y2;
+	v3.y2 = v1.y2 + v2.y2;
+
+	return v3;
+}
+
+UL_RECTANGLE vector_sub(UL_RECTANGLE v1, UL_RECTANGLE v2) {
+	UL_RECTANGLE v3;
+	v3.x1 = v1.x1 - v2.x1;
+	v3.x2 = v1.x2 - v2.x2;
+	v3.y1 = v1.y1 - v1.y2;
+	v3.y2 = v1.y2 - v2.y2;
+
+	return v3;
+}
+
+real vector_dot(UL_RECTANGLE v1, UL_RECTANGLE v2) {
+	real dot;
+	//may need to convert comoponents to real and scale down
+	dot = (v1.x2 - v1.x1)*(v2.x2 - v2.x1) + (v1.y2 - v1.y1)*(v2.y2 - v2.y1);
+
+	return dot;
+}
+
+// Computes the vector magnitude of a vector.
+// The result is in the same unit as defined in the vector
+real vector_mag(UL_RECTANGLE v) {
+	real x = unit_u2x(v.x2 - v.x1, v.layer);
+	real y = unit_u2x(v.y2 - v.y1, v.layer);
+
+	real mag = sqrt(x*x + y*y);
+}
+
+// Computes the vector argument (angle) in radians
+real vector_arg(UL_RECTANGLE v) {
+	real arg = 0;
+	real dx = unit_u2x(v.y2 - v.y1, v.layer);
+	real dy = unit_u2x(v.x2 - v.x1, v.layer);
+	
+	arg = atan((dy/dx));
+	//TODO: quadrant adjustments
+
+	return arg;
+}
