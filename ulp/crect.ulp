@@ -8,7 +8,7 @@
 "Width and height are mandatory parameters."
 "<p>"
 "Include the R flag to make all coordinates relative to the mark."
-"<p>
+"<p>"
 "The center coordinate may be omitted; it will default to (0 0) (or (R0 0) if the relative flag is set)."
 "<p>"
 "Example: rectangle with (width height) of (1 2):   crect 1 2"
