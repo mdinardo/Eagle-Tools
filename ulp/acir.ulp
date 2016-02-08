@@ -1,0 +1,84 @@
+#usage "<b>Create a circle with anchor points (x1 y1) and (x2 y2)</b>\n"
+"<p>"
+"Syntax:  acir [R] x1 y1 [x2 y2]"
+"<p>"
+" x1 and y1 are mandatory parameters; x2 and y2 defalt to zero."
+"<p>"
+"Include the R flag to make all coordinates relative to the mark."
+"<p>"
+"The resulting circle is calculated by treating the two anchor points as two points on the circle directly opposite to each other."
+"<p>"
+"Example: Circle with anchor point (1 0) and the origin: acir 1 0"
+"<p>"
+"Example: Circle with anchor points (R2 0) and (R0 2), relative to mark: acir R 2 0 0 2"
+
+
+//output("/tmp/ulp_output.txt") {
+    
+    real x1 = 0, y1 = 0;
+    real x2 = 0, y2 = 0;
+
+    // anchor 1 and 2 indicies, respectively
+    int a1_index = 0, a2_index = 0;
+    int relative = 0;
+
+    // Relative flag set
+    if (argc == 4 || argc == 6) {
+        int res = strstr("R", strupr(argv[1]));
+        if (-1 != res) {relative = 1;}
+        else {
+            string s = "";
+            sprintf(s, "Invalid parameter: %s", argv[1]);
+	  dlgMessageBox(s);
+            exit(1);
+        }
+        
+        a1_index = 2;
+        
+        if (argc == 6) {
+            a2_index = 4;
+        }
+    }
+    
+    else if (argc == 3 || argc == 5) {
+        a1_index = 1;
+
+        if (argc == 5) {
+            a2_index = 3;
+        }
+    }
+
+    else {
+        dlgMessageBox("Incorrect number of arguments","Ok");
+        exit(1);
+    }
+
+    x1 = strtod(argv[a1_index]);
+    y1 = strtod(argv[a1_index + 1]);
+
+    if (a2_index) {
+        x2 = strtod(argv[a2_index]);
+        y2 = strtod(argv[a2_index + 1]);
+    }
+
+    real dx = x2 - x1;
+    real dy = y2 - y1;
+    real cx = x1 + dx/2.0;
+    real cy = y1 + dy/2.0;
+
+    string s = "";
+    string fmt = "";
+    if (relative) {
+        fmt = "CIRCLE (R%f %f) (R%f %f);";
+    }
+    else {
+        fmt = "CIRCLE (%f %f) (%f %f);";
+    }
+    sprintf(s, fmt,        
+        cx, cy,
+        x1, y1
+
+    );
+    exit(s);
+//}
+

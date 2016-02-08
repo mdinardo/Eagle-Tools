@@ -1,0 +1,88 @@
+#usage "<b>Converts a rectangle into a polygon.</b>"
+	"<p>"
+	"This ULP will convert any rectangle in a group to a polygon.  It achieves this by using the xy coordinates in the rectangle and plotting the box, and deleting the rectangle."
+  	"<p>"
+	"<b>WARNING:</b> This ULP deletes the rectangles  all at once by deleting the ENTIRE GROUP.  It does not filter the group for rectangles, so anything in the group WILL BE DELETED."
+	"<p>"
+	"This script currently only supports rectangles which are not rotated."	
+
+#include "unit.ulp"
+#include "bool.ulp"
+
+int debug = True;
+
+string cmd = "";
+
+int draw_poly(UL_GRID g, UL_RECTANGLE r) {
+
+	real x1 = unit_u2x(r.x1, g.unit);
+	real x2 = unit_u2x(r.x2, g.unit);
+	real y1 = unit_u2x(r.y1, g.unit);
+	real y2 = unit_u2x(r.y2, g.unit);
+
+	string s = "";
+	sprintf (s, "LAYER %d; POLY (%f %f) (%f %f) (%f %f) (%f %f) (%f %f);",
+			r.layer,
+			x1, y1,
+			x1, y2,
+			x2, y2,
+			x2, y1,
+			x1, y1
+			);
+	cmd += s;
+	
+	return 0;
+}
+
+int main() {
+	string s = "";
+
+	if (board) board(B) {
+		if (debug) dlgMessageBox("Checking Board");
+		B.rectangles(R) {
+			if (ingroup(R)) {
+				draw_poly(B.grid, R);
+			}
+		}
+	}
+
+	// rectangles are in each sheet
+	if (schematic) schematic(SCH) {
+		SCH.sheets(SHEET) {
+			SHEET.rectangles(R) {
+				if (ingroup(R)) {
+					//sprintf(s, "EDIT .s%d;", SHEET.number);
+					cmd += s;	
+					draw_poly(SCH.grid, R);
+				}
+			}
+		}
+	}
+
+	if (library) library(LIB) {
+		LIB.packages(P) {
+			P.rectangles(R) {
+				if (ingroup(R)) {
+					draw_poly(LIB.grid, R);
+				}
+			}
+		}
+	
+		LIB.symbols(SYM) {
+			SYM.rectangles(R) {
+				if (ingroup(R)) {
+					draw_poly(LIB.grid, R);
+				}
+			}
+		}
+	}
+	
+	//delete group
+	sprintf(s, "DELETE (>0 0)");
+	cmd += s;
+
+	exit(cmd);
+
+
+	return 0;
+}
