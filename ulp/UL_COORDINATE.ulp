@@ -1,0 +1,56 @@
+/*
+ * Coordinate Format
+ * int array of size 4.
+ * Units are stored as Eagle's internal unit size.
+ * 
+ * x   y   Modifiers Unit (Rectangular)
+ * r theta Modifiers Unit (Polar)
+ * 
+ * The scheme used is one of the above as determined by
+ * the absence or presence of the Polar flag, respectively. 
+**/
+
+// define array position constants for each element of a coordinate object
+enum {
+    UL_COORD_X = 0,
+    UL_COORD_Y = 1,
+    UL_COORD_MOD = 2,
+    UL_COORD_UNIT = 3,
+    UL_COORD_SIZE = 4
+}
+
+// Modifier Flags
+enum {
+    UL_COORD_FLAG_NONE = 0x00,
+    UL_COORD_FLAG_C = 0x01, // Control key
+    UL_COORD_FLAG_A = 0x02, // Alt key
+    UL_COORD_FLAG_S = 0x04, // Shift key
+    UL_COORD_FLAG_G = 0x08, // Right click (ie: right caret '>')
+    UL_COORD_FLAG_R = 0x10, // Relative
+    UL_COORD_FLAG_P = 0x20, // Polar 
+    UL_COORD_FLAG_COUNT = 6 // num flags, excludes NONE.
+};
+
+// ul_coord_flag_array and ul_coord_flag_chars are a map
+// between the the modifires' logical enum representation and the character
+// used in text    
+int ul_coord_flag_array[] = {UL_COORD_FLAG_C, UL_COORD_FLAG_A, UL_COORD_FLAG_S, UL_COORD_FLAG_G, UL_COORD_FLAG_R, UL_COORD_FLAG_P};
+char ul_coord_flag_chars[] = {'C', 'A', 'S', '>', 'R', 'P'}; 
+
+int[] ul_coord_parse(UL_GRID grid, string input) {
+    int[4] coord;
+    
+}
+
+string ul_coord_tostring(int[] coord) {
+    
+    str = "(";
+
+    // append modifiers to the string
+    for(i = 0; i < UL_COORD_FLAG_COUNT; i++) {
+        if (coord[UL_COORD_MOD] & ul_coord_flag_array[i]) {
+            str += ul_coord_flag_chars[i];
+        }
+    }
+    
+}

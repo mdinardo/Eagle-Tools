@@ -1,0 +1,56 @@
+enum {
+    UNIT_NONE = 0,
+    UNIT_MIC = GRID_UNIT_MIC,
+    UNIT_MM = GRID_UNIT_MM,
+    UNIT_MIL = GRID_UNIT_MIL,
+    UNIT_INCH = GRID_UNIT_INCH
+}
+
+// converts a unit into an internal unit
+int unit_x2u(real value, int source_unit) {
+    switch(source_unit) {
+        case UNIT_MIC:
+            return mic2u(value); 
+            break;
+        case UNIT_MM:
+            return mm2u(value); 
+            break;
+        case UNIT_MIL:
+            return mil2u(value); 
+            break;
+        case UNIT_INCH:
+            return inch2u(value); 
+            break;
+        default:
+            return value;
+            break;
+    }
+}
+
+// converts an internal unit to a target unit
+real unit_u2x(int value, int dest_unit) {
+    switch(dest_unit) {
+        case UNIT_MIC:
+            return u2mic(value); 
+            break;
+        case UNIT_MM:
+            return u2mm(value); 
+            break;
+        case UNIT_MIL:
+            return u2mil(value); 
+            break;
+        case UNIT_INCH:
+            return u2inch(value); 
+            break;
+        default:
+            return value;
+            break;
+    }
+}
+
+// converts a number between two units
+real unit_x2x(real value, int source_unit, int dest_unit) {
+    if(source_unit == dest_unit) return value;
+
+    return unit_u2x(unit_x2u(value, source_unit), dest_unit); 
+}
