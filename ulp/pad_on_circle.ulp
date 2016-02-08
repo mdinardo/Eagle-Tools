@@ -1,0 +1,46 @@
+#usage "Places a PTH pad on top of all circles in a group."
+
+#include "unit.ulp"
+#include "bool.ulp"
+
+string cmd = "";
+
+int add_pad_using_circle(UL_GRID g, UL_CIRCLE c) {
+
+    real x = unit_u2x(c.x, g.unit);
+    real y = unit_u2x(c.y, g.unit);
+
+    string s = "";
+
+    sprintf(s, "PAD (%f %f);", 
+        x, y
+    );
+
+    cmd += s;
+
+    return 0;
+}
+
+int main() {
+    if (library) library(LIB) {
+        if (package) package(P) {
+            P.circles(C) {
+                if (ingroup(C)) {
+                    add_pad_using_circle(LIB.grid, C);
+                }
+            }
+        }
+    }
+
+    if (board) board(B) {
+        B.circles(C) {
+            if (ingroup(C)) {
+                add_pad_using_circle(B.grid, C);
+            }
+        }
+    }
+
+    exit(cmd);
+
+    return 0;
+}
