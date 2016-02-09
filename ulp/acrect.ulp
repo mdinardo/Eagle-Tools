@@ -1,6 +1,6 @@
-#usage "<b>Create a wire box with an anchor point (x1, y1) and center point (cx, cy)</b>\n"
+#usage "<b>Create a rectangle with an anchor point (x1, y1) and center point (cx, cy)</b>\n"
 "<p>"
-"Syntax:  abox [R] x1 y1 [cx cy]"
+"Syntax:  acrect [R] x1 y1 [cx cy]"
 "<p>"
 "Width and height are mandatory parameters."
 "<p>"
@@ -8,9 +8,9 @@
 "<p>"
 "The center coordinate may be omitted; it will default to (0 0) (or (R0 0) if the relative flag is set)."
 "<p>"
-"Example: Wire box with anchor point at (1 2), center at default (0 0):   abox 1 2"
+"Example: rectangle with anchor point at (1 2), center at default (0 0):   acrect 1 2"
 "<p>"
-"Example: Wire box relative to mark, with anchor point at (R3 4) centered at (R5 6):  abox R 3 4 5 6"
+"Example: rectangle relative to mark, with anchor point at (R3 4) centered at (R5 6):  acrect R 3 4 5 6"
 
 
 //output("/tmp/ulp_output.txt") {
@@ -62,27 +62,22 @@
         cy = strtod(argv[p_index + 1]);
     }
 
-    //compute other coordinate
     x2 = x1 + 2.0*(cx - x1);    
     y2 = y1 + 2.0*(cy - y1);
 
     string s = "";
     string fmt = "";
-
     if (relative) {
-        fmt = "WIRE (R%f %f) (R%f %f) (R%f %f) (R%f %f) (R%f %f);";
+        fmt = "RECT (R%f %f) (R%f %f);";
     }
     else {
-        fmt = "WIRE (%f %f) (%f %f) (%f %f) (%f %f) (%f %f);";
+        fmt = "RECT (%f %f) (%f %f);";
     }
-    sprintf(s, fmt,
-       x1, y1,
-       x1, y2,
-       x2, y2,
-       x2, y1,
-       x1, y1
+    sprintf(s, fmt,        
+        x1, y1,
+        x2, y2
+
     );
-    
     exit(s);
 //}
 
