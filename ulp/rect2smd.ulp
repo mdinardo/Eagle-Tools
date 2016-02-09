@@ -1,0 +1,79 @@
+#usage "<b>Converts a rectangle into a smd pad.</b>"
+	"<p>"
+	"This ULP will convert any rectangle in a group to a smd pad.  It achieves this by using the xy coordinates in the rectangle to size and place the pad, and then deleting the rectangle."
+  	"<p>"
+	"<b>WARNING:</b> This ULP deletes the rectangles  all at once by deleting the ENTIRE GROUP.  It does not filter the group for rectangles, so anything in the group WILL BE DELETED."
+	"<p>"
+	"Implementation note: "
+	"<p>"
+	"    1.) This script does not select which layer to place the smd pad.  The layer used will be whatever the SMD command defaults to."
+	"<p>"
+	"    2.) This script currently only supports rectangles which are not rotated."	
+
+#include "unit.ulp"
+#include "bool.ulp"
+
+int debug = True;
+
+string cmd = "";
+
+int draw_smd(UL_GRID g, UL_RECTANGLE r) {
+
+	real x1 = unit_u2x(r.x1, g.unit);
+	real x2 = unit_u2x(r.x2, g.unit);
+	real y1 = unit_u2x(r.y1, g.unit);
+	real y2 = unit_u2x(r.y2, g.unit);
+	
+	real cx = (x1 + x2) / 2.0;
+	real cy = (y1 + y2) / 2.0;
+
+	real width = abs(x2 - x1);
+	real height = abs(y2 - y1);
+
+	string s = "";
+	sprintf (s, "SMD %fx%f (%f %f);",
+		width, height,
+		cx, cy
+	);
+	cmd += s;
+	
+	return 0;
+}
+
+int main() {
+	string s = "";
+
+	if (board) board(B) {
+		if (debug) dlgMessageBox("Checking Board");
+		B.rectangles(R) {
+			if (ingroup(R)) {
+				draw_smd(B.grid, R);
+			}
+		}
+	}
+
+	// rectangles are in each sheet
+	if (schematic) {
+		dlgMessageBox("This script only works for board and package layouts!");
+		exit(1);
+	}
+
+	if (library) library(LIB) {
+		LIB.packages(P) {
+			P.rectangles(R) {
+				if (ingroup(R)) {
+					draw_smd(LIB.grid, R);
+				}
+			}
+		}
+	}
+	
+	//delete group
+	sprintf(s, "DELETE (>0 0)");
+	cmd += s;
+
+	exit(cmd);
+
+
+	return 0;
+}
