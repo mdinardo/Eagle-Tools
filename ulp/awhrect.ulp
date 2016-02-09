@@ -1,0 +1,98 @@
+#usage "<b>Create a rectangle with an anchor point (x1, y1) on the center of one edge and extend it vertically or horizontally by a width+height</b>\n"
+"<p>"
+"Syntax:  acrect [R] [H] x y w h"
+"<p>"
+"X, Y, Width, Height are mandatory parameters"
+"<p>"
+"Include the R flag to make all coordinates relative to the mark."
+"<p>"
+"Include the H flag to make the anchor on the left vertical edge and extend horizontally.  The anchor is by defualt on the bottom horizontal edge so that the extension is vertical."
+"<p>"
+"Example: rectangle with anchor point at (1 2), size 1x2:   acrect 1 2 1 2"
+"<p>"
+"Example: rectangle relative to mark, with anchor point at (R3 4) and size 5x6:  acrect R 3 4 5 6"
+"<p>"
+"Example: rectangle relative to mark, with anchor point at (R3 4) (left vertical edge), size 5x6: acrect R H 3 4 5 6"
+
+#include "bool.ulp"
+int DEBUG = False;
+
+int is_param_R(string inp) {
+    return ( -1 != strstr("R", strupr(inp)) );
+}
+
+int is_param_H(string inp) {
+    return ( -1 != strstr("H", strupr(inp)) );
+}
+
+//output("/tmp/ulp_output.txt") {
+    
+    real x = 0, y = 0;
+    real width = 0, height = 0;
+
+    //dimension index, position index
+    int a_index = 0, d_index = 0;
+
+    // flags
+    int is_relative = False;
+    int is_horizontal = False;
+
+    // Flags R and/or H
+    if (argc == 6 || argc == 7) {
+        int res = is_param_R(argv[1]);
+        
+        for(int i = 1; i <= (argc-5); i++) {
+            if (is_param_R(argv[i])) {
+                if(DEBUG) dlgMessageBox("Have R param");
+                is_relative = True;
+            }
+            else if (is_param_H(argv[i])) {
+                if(DEBUG) dlgMessageBox("Have H param");
+                is_horizontal = True;
+            }
+            else {
+                string err = "";
+                sprintf(err, "Invalid parameter: %s", argv[i]);
+                dlgMessageBox(err, "Ok");
+                exit(1);
+            }
+        }
+    }
+    
+    else if (argc != 5) {
+        dlgMessageBox("Incorrect number of arguments","Ok");
+        exit(1);
+    }
+    else{}
+
+    a_index = 1 + (argc==6 ? 1:0) + (argc==7 ? 2:0);
+    d_index = a_index + 2;
+
+    x = strtod(argv[a_index]);
+    y = strtod(argv[a_index + 1]);
+
+    width = strtod(argv[d_index]);
+    height = strtod(argv[d_index + 1]);
+
+    // Coordinates (x1 y1), (x2 y2) are assigned as top-left, bottom-right
+    real x1 = (is_horizontal) ?       x          : (x - width/2.0);
+    real x2 = (is_horizontal) ?   (x + width)    : (x + width/2.0);
+    real y1 = (is_horizontal) ? (y + height/2.0) : (y + height);
+    real y2 = (is_horizontal) ? (y - height/2.0) : (y);
+
+    string s = "";
+    string fmt = "";
+    if (is_relative) {
+        fmt = "RECT (R%f %f) (R%f %f);";
+    }
+    else {
+        fmt = "RECT (%f %f) (%f %f);";
+    }
+    sprintf(s, fmt,        
+        x1, y1,
+        x2, y2
+
+    );
+    exit(s);
+//}
+
