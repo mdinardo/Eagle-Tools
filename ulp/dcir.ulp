@@ -1,25 +1,25 @@
-#usage "<b>Create a circle of radius r with center point (cx, cy)</b>\n"
+#usage "<b>Create a circle of diammeter d with center point (cx, cy)</b>\n"
 "<p>"
-"Syntax:  ccir [R] r [cx cy]"
+"Syntax:  ccir [R] d [cx cy]"
 "<p>"
-"Radius (r) is a mandatory parameters."
+"Diammeter is a mandatory parameter."
 "<p>"
 "Include the R flag to make all coordinates relative to the mark."
 "<p>"
 "The center coordinate may be omitted; it will default to (0 0) (or (R0 0) if the relative flag is set)."
 "<p>"
-"Example: circle with radius 1, center at default (0 0):   ccir 1"
+"Example: circle with diammeter 2, center at default (0 0):   dcir 2"
 "<p>"
-"Example: circle relative to mark, with radius 3, centered at (R5 6):  ccir R 3 5 6"
+"Example: circle relative to mark, with diammeter 3, centered at (R5 6):  dcir R 3 5 6"
 
 
 //output("/tmp/ulp_output.txt") {
     
-    real r = 0;
+    real d = 0;
     real cx = 0, cy = 0;
 
-    //radius index, center position index
-    int r_index = 0, c_index = 0;
+    //diammeter index, center position index
+    int d_index = 0, c_index = 0;
     int relative = 0;
 
     // Relative flag set
@@ -33,7 +33,7 @@
             exit(1);
         }
         
-        r_index = 2;
+        d_index = 2;
         
         if (argc == 5) {
             c_index = 3;
@@ -41,7 +41,7 @@
     }
     
     else if (argc == 2 || argc == 4) {
-        r_index = 1;
+        d_index = 1;
 
         if (argc == 4) {
             c_index = 2;
@@ -53,7 +53,7 @@
         exit(1);
     }
 
-    r = strtod(argv[r_index]);
+    d = strtod(argv[d_index]);
     
     if (c_index) {
         cx = strtod(argv[c_index]);
@@ -71,7 +71,7 @@
     }
     sprintf(s, fmt,        
         cx, cy,
-        (cx + r), cy
+        (cx + d/2.0), cy
     );
     exit(s);
 //}
