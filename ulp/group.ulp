@@ -1,0 +1,152 @@
+#usage "<b>Groups parts in the board/schematic that are already grouped in the schematic/board</b>\n"
+"<p>"
+"The names of the parts in the 'Source' window which have their group flag set are recorded.<br>"
+"Then for the 'Target' window, the group flag is set on parts if their name was recorded."
+"<p>"
+"By default, the operation is perfromed from the 'Source' window.<br>"
+"Use the 'E' flag to perform the operation from the 'Target' window."
+"A useful way to remember:  From <SOURCE> window, set group in <TARGET> window with group from <SOURCE> window."
+"and with the 'E' flag: From <TARGET> window, set group in <TARGET> window with group from <SOURCE> window."
+"<p>"
+"Flags:<br>"
+"    E - Use the 'External' group; perform operation from 'Target' window"
+"<p>"
+"Usage Table:<br>"
+"<table border = '1' cellpadding='5'>"
+"<tr><td>Source Window</td><td>Target Window</td><td>Current Window</td><td>CLI Flags</td></tr>"
+"<tr><td>Schematic</td><td>Board</td><td>Board</td><td>E</td></tr>"
+"<tr><td>Schematic</td><td>Board</td><td>Schematic</td><td></td></tr>"
+"<tr><td>Board</td><td>Schematic</td><td>Board</td><td></td></tr>"
+"<tr><td>Board</td><td>Schematic</td><td>Schematic</td><td>E</td></tr>"
+"</table>"
+
+#include "bool.ulp"
+
+int name_count = 0;
+string names[];
+
+
+int is_external = FALSE;
+int is_group_append = TRUE;
+
+//populates the names array with the names of parts that are grouped in the schematic S.
+void sch_populate_names(UL_SCHEMATIC S) {
+    S.parts(P) {
+        P.instances(I) {
+            if (ingroup(I)){
+                names[name_count++] = P.name;
+            }
+        }
+    }
+}
+
+//populates the names array with the names of parts that are grouped in the board B.
+void brd_populate_names(UL_BOARD B) {
+    B.elements(E) {
+        if (ingroup(E)) {
+            names[name_count++] = E.name;
+        }
+    }
+    
+}
+
+// checks if the string 'name' is in the names array.
+int is_name_recorded(string name) {
+    for (int i = 0; i < name_count; i++) {
+        if (name == names[i]) return TRUE;
+    }
+    return FALSE;
+}
+
+//REmoves everything from schematic S's group.
+void sch_clr_group_all(UL_SCHEMATIC S) {
+    clrgroup(S);
+}
+
+//Removes everything from board B's group.
+void brd_clr_group_all(UL_BOARD B) {
+    clrgroup(B);
+}
+
+//Removes all part instances from a schematic's group
+void sch_clr_group_instances(UL_SCHEMATIC S) {
+    S.parts(P) {
+        P.instances(I) {
+            clrgroup(I);
+        }
+    }
+}
+
+//Removes all elements from a board's group
+void brd_clr_group_elements(UL_BOARD B) {
+    B.elements(E) {
+        clrgroup(E);
+    }
+}
+
+//Sets the group flag for parts in schematic S
+void sch_set_group(UL_SCHEMATIC S) {
+    S.parts(P) {
+        P.instances(I) {
+            if (is_name_recorded(I.name)){
+                setgroup(I);
+            }
+        }
+    }
+}
+
+//Sets the group flag for elements in board B
+void brd_set_group(UL_BOARD B) {
+    B.elements(E) {
+        if (is_name_recorded(E.name)) {
+            setgroup(E);
+        }
+    }
+}
+
+
+if (argc == 2 && "E" == strupr(argv[1])) {
+    is_external = TRUE;
+}
+
+
+output ("test.txt") {
+    UL_SCHEMATIC S;
+    UL_BOARD B;
+    
+    //Current window is schematic.
+    if (schematic) schematic(SCH) {
+        project.board(BRD) {
+            //Set schematic group with group from board.
+            if (is_external) {
+                brd_populate_names(BRD);
+                sch_set_group(SCH);
+            }
+            //Set board group with group from schematic.
+            else {
+                sch_populate_names(SCH);
+                brd_set_group(BRD);
+            }
+        }
+    }
+    
+    //Current window is board.
+    if (board) board(BRD) {
+        project.schematic(SCH) {
+            //Set board group with group from schematic.
+            if (is_external) {
+                sch_populate_names(SCH);
+                brd_set_group(BRD);
+            }
+            //Set schematic group with group from board.
+            else {
+                brd_populate_names(BRD);
+                sch_set_group(SCH);
+            }
+        }
+    }
+
+    for(int i = 0; i < name_count; i++) {
+        printf("%s\n", names[i]);
+    }
+}
