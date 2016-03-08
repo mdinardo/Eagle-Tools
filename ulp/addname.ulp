@@ -1,0 +1,11 @@
+string add_name_sym = "lay name; text '>NAME' (0 0);";
+string add_name_pac = "lay tname; text '>NAME' (0 0);";
+
+if (package) package(P) {
+    exit(add_name_pac);
+}
+
+if (symbol) symbol(S) {
+    exit(add_name_sym);
+}
+
