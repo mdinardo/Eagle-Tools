@@ -1,0 +1,102 @@
+#usage "<b>Clump elements in a group onto a single coordinate.</b>\n"
+"<p>"
+"Syntax:  clump [o|r [x y]]"
+
+#include "bool.ulp"
+#include "unit.ulp"
+
+int is_origin = FALSE;
+int is_relative = FALSE;
+int is_mouse = FALSE;
+real x = 0, y = 0;
+
+//Checks the arg param, and sets the global
+//is_x variables accordingly if it matches a flag.
+//Implementation note: a blank string "" will
+//default to setup for a mouse position reference
+//
+// Returns: an integer; zero if successful,
+// Non-zero if an invalid arg was given
+int setup_reference(string arg) {
+    arg = strupr(arg);
+    if (arg == "") {
+       is_mouse = TRUE; 
+    }
+    else if (arg == "O") {
+        is_origin = TRUE;
+    }
+    else if (arg == "R") {
+        is_relative = TRUE;
+    }
+    else {
+        return -1;
+    }
+
+    return 0;
+}
+
+//Generates the string command to move an element e
+//based on the global is_x references.
+string create_move_element_string(UL_ELEMENT e) {
+    string cmd = "MOVE %s %s;";
+    string coord = "";
+    if (is_mouse) {
+        coord = "(@)";
+    }
+    else if (is_origin) {
+        sprintf(coord, "(%f %f)", x, y);
+    }
+    else if (is_relative) {
+        sprintf(coord, "(R%f %f)", x, y);
+    }
+    else {
+        cmd = "";
+    }
+    sprintf(cmd, cmd, e.name, coord);
+    return cmd;
+}
+
+if (argc == 1) {
+    setup_reference("");
+}
+else if (argc == 2 || argc == 4) {
+    if (0 != setup_reference(argv[1])) {
+        string err = "";
+        sprintf(err, "Invalid arg: %s", argv[1]);
+        dlgMessageBox(err);
+        exit(1);
+    }
+
+    if (argc == 4) {
+        x = strtod(argv[2]);
+        y = strtod(argv[3]);
+    }
+}
+else {
+    dlgMessageBox("Invalid number of arguments");
+    exit(1);
+}
+
+
+//currently only implemented for boards
+if (board) board(BRD) {
+    string cmd = "";
+    
+    BRD.elements(E) {
+        if (ingroup(E)) {
+            string move_cmd = create_move_element_string(E);
+            if ("" != move_cmd) {
+                cmd += move_cmd;
+            }
+        }
+    }
+
+    exit(cmd);
+}
+
+else {
+
+    dlgMessageBox("Please run this in the board");
+    exit(1);
+
+}
