@@ -1,0 +1,80 @@
+//Trig functions and helpers
+//Note: Eagle's implementation is with radians.
+
+/**** Angle Converters ****/
+
+//Converts degrees into radians.
+real deg2rad(real deg) {
+    return deg * (PI/180.0);
+}
+
+//Converts radians into degrees.
+real rad2deg(real rad) {
+    return rad * (180.0/PI);
+}
+
+
+/**** Radians Trig ****/
+
+//acos function with radians
+real acosr(real x) {
+    return acos(x);
+}
+
+//asin function with radians
+real asinr(real x) {
+    return aswith(x);
+}
+
+//atan function with radians
+real atanr(real x) {
+    return atan(x);
+}
+
+//cos function with radians
+real cosr(real x) {
+    return cos(x);
+}
+
+//sin function with radians
+real sinr(real x) {
+    return sin(x);
+}
+
+//tan function with radians
+real tanr(real x) {
+    return tan(x);
+}
+
+/**** Degrees Trig ****/
+
+//acos function with degrees
+real acosd(real x) {
+    return rad2deg(acos(x));
+}
+
+//asin function with degrees
+real asind(real x) {
+    return rad2deg(asin(x));
+}
+
+//atan function with degrees
+real atand(real x) {
+    return rad2deg(atan(x));
+}
+
+//cos function with degrees
+real cosd(real x) {
+    return cos(deg2rad(x));
+}
+
+//sin function with degrees
+real sind(real x) {
+    return sin(deg2rad(x));
+}
+
+//tan function with degrees
+real tand(real x) {
+    return tan(deg2rad(x));
+}
+
