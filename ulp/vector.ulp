@@ -3,6 +3,7 @@
  * Uses a string to store the components.  components are separated by a delimiter.
  */
 #include "trig.ulp"
+#include "interpolation.ulp"
 
 char VECTOR_COMPONENT_DELIMITER = ';';
 
@@ -222,4 +223,18 @@ string vector2d_rotr(string vec, real theta) {
     real y1 = x*sinr(theta) + y*cosr(theta);
 
     return vector2d_create(x1, y1);
+}
+
+//Linear interpolation between vectors start and end at some percent displacement position
+string vector2d_lerp(string start, string end, real position) {
+    real sx = vector_getx(start);
+    real sy = vector_gety(start);
+    real ex = vector_getx(end);
+    real ey = vector_gety(end);
+
+    //perform the lerp operation on both x and y components
+    real x = lerp(sx, ex, position);
+    real y = lerp(sy, ey, position);
+
+    return vector2d_create(x, y);
 }

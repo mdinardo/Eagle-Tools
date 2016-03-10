@@ -1,0 +1,41 @@
+//Linear interpolation between start and end.
+//position e[0.0, 1.0] -> percent linear displacement.
+real lerp(real start, real end, real position) {
+    return start + position * (end - start);
+}
+
+//TODO
+//spherical linear interpolation in degreess between start and end angles.
+//position e[0.0, 1.0] -> percent angular displacement.
+//Interpolation can be in shortest path mode, or fixed direction mode.
+//Parameters:
+//  int shortest:
+//      flag for shortest path mode.  non-zero = enabled, zero = disabled.
+//  int clockwise:
+//      flag for clockwise / counterclockwise interpolation.
+//      this parameter only has an effect when shortest path mode is disabled.
+real slerpd(real start, real end, real position, int shortest, int clockwise) {
+   if (shortest) {
+        
+   }
+   else {
+        if (clockwise) {
+            
+        }
+        else {
+            
+        }
+   }
+    //TODO
+    return 0;
+}
+
+//TODO
+//spherical linear interpolation in radians between start and end angles.
+//see docs for slerpd for behaviour.
+real slerpr(real start, real end, real position, real shortest, real clockwise) {
+    start = rad2deg(start);
+    end = rad2deg(end);
+    real angle_deg = slerpd(start, end, position, shortest, clockwise);
+    return deg2rad(angle_deg);
+}
