@@ -1,66 +1,225 @@
 /*
  * Vector object type hack.
- * Uses
+ * Uses a string to store the components.  components are separated by a delimiter.
  */
-#include "unit.ulp"
+#include "trig.ulp"
 
-UL_RECTANGLE vector_create(real x1, real y1, real x2, real y2, int unit) {
-	UL_RECTANGLE v;
-	
-	v.layer = unit;
+char VECTOR_COMPONENT_DELIMITER = ';';
 
-	v.x1 = unit_x2u(x1, unit);
-	v.x2 = unit_x2u(x2, unit);
-	v.y1  = unit_x2u(y1, unit);
-	v.y2 = unit_x2u(y2, unit);
+enum {
+    VECTOR_COMPONENT_INDEX_X = 0,
+    VECTOR_COMPONENT_INDEX_Y = 1
+};
 
+string vector2d_create(real x, real y) {
+    string vec = "%f;%f";
+    sprintf(vec, vec, x, y);
+    return vec;
 }
 
-UL_RECTANGLE vector_add(UL_RECTANGLE v1, UL_RECTANGLE v2) {
-	UL_RECTANGLE v3;
-	v3.x1 = v1.x1 + v2.x1;
-	v3.x2 = v1.x2 + v2.x2;
-	v3.y1 = v1.y1 + v1.y2;
-	v3.y2 = v1.y2 + v2.y2;
+//Extracts components from vector vec at an index
+real vector_get_component(string vec, int index) {
+    int token_start = 0, token_end = 0;
+    int token_count = 0;
+    string component_str = "";
 
-	return v3;
+    for (token_start = 0, token_end = 0; token_end < strlen(vec); token_end++ ) {
+        if (vec[token_end] == VECTOR_COMPONENT_DELIMITER) {
+            token_count ++;
+
+            //found the desired component, exit the loop
+            if (token_count > index) {
+                break;
+            }
+            //need to continue searching
+            else {
+                token_start = token_end + 1;    
+            }
+        }
+    }
+    //extract component string from vector
+    component_str = strsub(vec, token_start, (token_end - token_start));
+
+    //convert component into real number and return result
+    return strtod(component_str);
 }
 
-UL_RECTANGLE vector_sub(UL_RECTANGLE v1, UL_RECTANGLE v2) {
-	UL_RECTANGLE v3;
-	v3.x1 = v1.x1 - v2.x1;
-	v3.x2 = v1.x2 - v2.x2;
-	v3.y1 = v1.y1 - v1.y2;
-	v3.y2 = v1.y2 - v2.y2;
-
-	return v3;
+//Extracts the x component of vector vec
+real vector_getx(string vec) {
+    return vector_get_component(vec, VECTOR_COMPONENT_INDEX_X);
 }
 
-real vector_dot(UL_RECTANGLE v1, UL_RECTANGLE v2) {
-	real dot;
-	//may need to convert comoponents to real and scale down
-	dot = (v1.x2 - v1.x1)*(v2.x2 - v2.x1) + (v1.y2 - v1.y1)*(v2.y2 - v2.y1);
-
-	return dot;
+//Extracts the y component of vector vec
+real vector_gety(string vec) {
+    return vector_get_component(vec, VECTOR_COMPONENT_INDEX_Y);
 }
 
-// Computes the vector magnitude of a vector.
-// The result is in the same unit as defined in the vector
-real vector_mag(UL_RECTANGLE v) {
-	real x = unit_u2x(v.x2 - v.x1, v.layer);
-	real y = unit_u2x(v.y2 - v.y1, v.layer);
+//Negates components of vector vec
+string vector2d_neg(string vec) {
+    real x = vector_getx(vec);
+    real y = vector_gety(vec);
 
-	real mag = sqrt(x*x + y*y);
+    return vector2d_create(-x, -y);
 }
 
-// Computes the vector argument (angle) in radians
-real vector_arg(UL_RECTANGLE v) {
-	real arg = 0;
-	real dx = unit_u2x(v.y2 - v.y1, v.layer);
-	real dy = unit_u2x(v.x2 - v.x1, v.layer);
-	
-	arg = atan((dy/dx));
-	//TODO: quadrant adjustments
+//Addes vector vec2 to vector vec1
+string vector2d_add(string vec1, string vec2) {
+    real x1 = vector_getx(vec1);
+    real y1 = vector_gety(vec1);
+    real x2 = vector_getx(vec2);
+    real y2 = vector_gety(vec2);
 
-	return arg;
+    real x3 = x1 + x2;
+    real y3 = y1 + y2;
+
+    return vector2d_create(x3, y3);
+}
+
+//Subtracts vector vec2 from vector vec1
+string vector2d_sub(string vec1, string vec2) {
+    real x1 = vector_getx(vec1);
+    real y1 = vector_gety(vec1);
+    real x2 = vector_getx(vec2);
+    real y2 = vector_gety(vec2);
+
+    real x3 = x1 - x2;
+    real y3 = y1 - y2;
+
+    return vector2d_create(x3, y3);
+}
+
+//Scales vector vec's components by a factor
+string vector2d_scale(string vec, real factor) {
+    real x = vector_getx(vec);
+    real y = vector_gety(vec);
+
+    x *= factor;
+    y *= factor;
+
+    return vector2d_create(x, y);
+}
+
+//Multiplies vector vec's componetns by a factor
+string vector2d_mult(string vec, real factor) {
+    return vector2d_scale(vec, factor);
+}
+
+//Divides vector vec's components by a factor
+string vector2d_div(string vec, real factor) {
+    return vector2d_scale(vec, 1.0/factor);
+}
+
+//Returns the squared magnitude of vector vec
+real vector2d_mag2(string vec) {
+    real x = vector_getx(vec);
+    real y = vector_gety(vec);
+    
+    return x*x + y*y;
+}
+
+//Returns the magnitude of vector vec
+real vector2d_mag(string vec) {
+    return sqrt(vector2d_mag2(vec));
+}
+
+//Computes the argument (angle) of vector vec in degrees.
+//The angle will be in (-180, 180];
+real vector2d_argd(string vec) {
+    real x = vector_getx(vec);
+    real y = vector_gety(vec);
+    
+    return atan2d(y, x);
+}
+
+//Computes the argument (angle) of vector vec in radians.
+//The angle will be in (-PI, PI];
+real vector2d_argr(string vec) {
+    real x = vector_getx(vec);
+    real y = vector_gety(vec);
+    
+    return atan2r(y, x);
+}
+
+
+//Returns the unit vector of vector vec
+string vector2d_unit(string vec) {
+    real x = vector_getx(vec);
+    real y = vector_gety(vec);
+    real mag = sqrt(x*x + y*y);
+
+    return vector2d_create( x / mag, y / mag);
+}
+
+real vector2d_dot(string vec1, string vec2) {
+    real x1 = vector_getx(vec1);
+    real y1 = vector_gety(vec1);
+    real x2 = vector_getx(vec2);
+    real y2 = vector_gety(vec2);
+
+    return (x1*x2) + (y1*y2);
+}
+
+//Cross product for 2d vectors.
+//Note that this implementation returns a scalar instead of a vector.
+//Reasoning:
+//The cross product on 2d (XY) vectors produces
+//a vector with only a Z component. In situations where you would use
+//the cross product on 2d vectors, you mostly want to know what the Z component is
+//and don't care for having it in vector form.
+//Therefore this function returns just the Z component of the cross product.
+real vector2d_cross(string vec1, string vec2) {
+    real x1 = vector_getx(vec1);
+    real y1 = vector_gety(vec1);
+    real x2 = vector_getx(vec2);
+    real y2 = vector_gety(vec2);
+
+    return (x1*y2) - (x2*y1);
+}
+
+//Projects vector vec1 onto vector vec2
+//Functionally equivalent to: (vec1 . vec2) / |vec2|^2 * vec2
+string vector2d_project(string vec1, string vec2) {
+    
+    real scale = vector2d_dot(vec1, vec2) / vector2d_mag2(vec2);
+
+    return vector2d_mult(vec2, scale);
+}
+
+//Rejects vector vec1's projection onto vector vec2 from vec1
+//Functionally equivalent to: vec1 - proj(vec1, vec2)
+string vector2d_reject(string vec1, string vec2) {
+    
+    string proj = vector2d_project(vec1, vec2);
+
+    return vector2d_sub(vec1, proj);
+}
+
+//Rotates a vector by theta degrees
+string vector2d_rotd(string vec, real theta) {
+    real x = vector_getx(vec);
+    real y = vector_gety(vec);
+
+    //Rotation matrix:
+    // cos(theta)    -sin(theta)
+    // sin(theta)    cos(theta)
+
+    real x1 = x*cosd(theta) - y*sind(theta);
+    real y1 = x*sind(theta) + y*cosd(theta);
+
+    return vector2d_create(x1, y1);
+}
+
+//Rotates a vector by theta radians
+string vector2d_rotr(string vec, real theta) {
+    real x = vector_getx(vec);
+    real y = vector_gety(vec);
+
+    //Rotation matrix:
+    // cos(theta)    -sin(theta)
+    // sin(theta)    cos(theta)
+
+    real x1 = x*cosr(theta) - y*sinr(theta);
+    real y1 = x*sinr(theta) + y*cosr(theta);
+
+    return vector2d_create(x1, y1);
 }
