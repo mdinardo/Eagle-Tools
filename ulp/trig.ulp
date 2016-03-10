@@ -23,12 +23,45 @@ real acosr(real x) {
 
 //asin function with radians
 real asinr(real x) {
-    return aswith(x);
+    return asin(x);
 }
 
 //atan function with radians
 real atanr(real x) {
     return atan(x);
+}
+
+//atan2 function with radians
+//The range of this implementation is (-PI, PI]
+//and depends on an arctan function whose range is (-PI/2.0, PI/2.0]
+real atan2r(real y, real x) {
+    real angle = 0;
+    
+    if (x > 0) {
+        angle = atanr(y/x);
+    }
+    else if (x < 0) {
+        if (y >= 0) {
+            angle = atanr(y/x) + PI;
+        }
+        else {
+            angle = atanr(y/x) - PI;
+        }
+    }
+    else {
+        if (y > 0) {
+            angle = PI/2.0;
+        }
+        else if (y < 0) {
+            angle = -PI/2.0;
+        }
+        // Typically undefined if x=0 & y=0
+        //This implementation uses 0 instead.
+        else {
+            angle = 0;
+        }
+    }
+    return angle;
 }
 
 //cos function with radians
@@ -61,6 +94,39 @@ real asind(real x) {
 //atan function with degrees
 real atand(real x) {
     return rad2deg(atan(x));
+}
+
+//atan2 function with degrees
+//The range of this implementation is (-180.0, 180.0]
+//and depends on an arctan function whose range is (-90.0, 90.0]
+real atan2d(real y, real x) {
+    real angle = 0;
+    
+    if (x > 0) {
+        angle = atand(y/x);
+    }
+    else if (x < 0) {
+        if (y >= 0) {
+            angle = atand(y/x) + 180.0;
+        }
+        else {
+            angle = atand(y/x) - 180.0;
+        }
+    }
+    else {
+        if (y > 0) {
+            angle = 90.0;
+        }
+        else if (y < 0) {
+            angle = -90.0;
+        }
+        // Typically undefined if x=0 & y=0
+        //This implementation uses 0 instead.
+        else {
+            angle = 0;
+        }
+    }
+    return angle;
 }
 
 //cos function with degrees
