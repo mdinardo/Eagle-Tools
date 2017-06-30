@@ -3,21 +3,25 @@
 "The names of the parts in the 'Source' window which have their group flag set are recorded.<br>"
 "Then for the 'Target' window, the group flag is set on parts if their name was recorded."
 "<p>"
-"By default, the operation is perfromed from the 'Source' window.<br>"
-"Use the 'E' flag to perform the operation from the 'Target' window."
-"A useful way to remember:  From <SOURCE> window, set group in <TARGET> window with group from <SOURCE> window."
-"and with the 'E' flag: From <TARGET> window, set group in <TARGET> window with group from <SOURCE> window."
+"This script can operate in two modes: Source Push, and Target Pull."
 "<p>"
+"Source Push mode will use the group that is defined in the current (Source) window to define the group in the other (Target) window.<br>"
+"Target Pull mode will use the group that is defined in the other (Source) window to define the group in the current (Target) window.<br>"
+"<p>"
+"By default, the script runs in Source Push mode.<br>"
+"To operate in Target Pull mode, use the 'E' flag.<br>"
+"<p>"
+
 "Flags:<br>"
-"    E - Use the 'External' group; perform operation from 'Target' window"
+"    E - Use the 'External' group; Run in Target Pull mode."
 "<p>"
 "Usage Table:<br>"
 "<table border = '1' cellpadding='5'>"
-"<tr><td>Source Window</td><td>Target Window</td><td>Current Window</td><td>CLI Flags</td></tr>"
-"<tr><td>Schematic</td><td>Board</td><td>Board</td><td>E</td></tr>"
-"<tr><td>Schematic</td><td>Board</td><td>Schematic</td><td></td></tr>"
-"<tr><td>Board</td><td>Schematic</td><td>Board</td><td></td></tr>"
-"<tr><td>Board</td><td>Schematic</td><td>Schematic</td><td>E</td></tr>"
+"<tr><td>Current Window</td><td>Source Window</td><td>Target Window</td><td>CLI Flags</td></tr>"
+"<tr><td>Board</td><td>Board</td><td>Schematic</td><td></td></tr>"
+"<tr><td>Board</td><td>Schematic</td><td>Board</td><td>E</td></tr>"
+"<tr><td>Schematic</td><td>Schematic</td><td>Board</td><td></td></tr>"
+"<tr><td>Schematic</td><td>Board</td><td>Schematic</td><td>E</td></tr>"
 "</table>"
 
 #include "bool.ulp"
@@ -58,7 +62,7 @@ int is_name_recorded(string name) {
     return FALSE;
 }
 
-//REmoves everything from schematic S's group.
+//Removes everything from schematic S's group.
 void sch_clr_group_all(UL_SCHEMATIC S) {
     clrgroup(S);
 }
