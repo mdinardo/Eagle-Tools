@@ -1,4 +1,4 @@
-string add_name_sym = "lay name; text '>NAME' (0 0);";
+string add_name_sym = "lay names; text '>NAME' (0 0);";
 string add_name_pac = "lay tname; text '>NAME' (0 0);";
 
 if (package) package(P) {
