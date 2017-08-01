@@ -1,0 +1,31 @@
+# Template for generating supply net symbols.
+# Code auto-generated from the export-lbrs.ulp and further modified.
+# Replace "__SUPPLY_NAME__" with the desired net name.
+
+Set Wire_Bend 2;
+# Grid changed to 'mm' to avoid loss of precision!
+Grid mm;
+
+Edit '__SUPPLY_NAME__.sym';
+Layer 94; # symbol
+Wire  0.254 (1.27 -1.905) (0 0) (-1.27 -1.905);
+Pin '__SUPPLY_NAME__' sup none short R90 off 0 (0 -2.54);
+Layer 96; # values
+Change Size 1.27;
+Change Align bottom center;
+Text '>VALUE' R0 (0 0.508);
+
+Edit '__SUPPLY_NAME__.dev';
+Prefix '';
+Description '';
+Value off;
+Add __SUPPLY_NAME__ 'G$1' next 0 (0 2.54);
+Technology '';
+Technology '';
+Attribute _EXTERNAL_ '' variable;
+Attribute VALUE '__SUPPLY_NAME__' constant;
+
+# return to previous grid.
+Grid last;
+Edit ;
+
