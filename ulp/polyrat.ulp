@@ -1,0 +1,10 @@
+#usage "<b>Enables and disables net polygon filling upon the use of the ratsnest tool.</b>\n"
+
+string ScriptName = "polyrat";
+string Version = "1.00";
+
+string command = "";
+
+sprintf(command, "set POLYGON_RATSNEST %s", argv[1]);
+exit(command);
+

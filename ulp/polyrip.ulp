@@ -1,0 +1,8 @@
+#usage "<b>Uses the ripup tool undo all net polygon fills.</b>\n"
+
+string ScriptName = "polyrip";
+string Version = "1.00";
+
+string command = "ripup @;";
+exit(command);
+
