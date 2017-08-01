@@ -4,7 +4,14 @@ string ScriptName = "polyrat";
 string Version = "1.00";
 
 string command = "";
+string mode = "";
 
-sprintf(command, "set POLYGON_RATSNEST %s", argv[1]);
+// Lets you type on/off, or 1/0
+mode = argv[1];
+if (mode == "1") mode = "on";
+if (mode == "0") mode = "off";
+
+
+sprintf(command, "set POLYGON_RATSNEST %s", mode);
 exit(command);
 
