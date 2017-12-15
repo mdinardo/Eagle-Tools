@@ -1,0 +1,13 @@
+# sets the default grids
+
+Grid on;
+
+GRID = mm_default mm 1 1 lines on alt mm 0.1;
+GRID = schematic_inch inch 0.1 1 lines on alt inch 0.01;
+GRID = route_mil_50_10 mil 50 1 lines on alt mil 10;
+GRID = route_mil_50_5 mil 50 1 lines on alt mil 5;
+
+GRID = mm_0p8_0p1 mm 0.8 1 lines on alt mm 0.1;
+GRID = mm_0p65 mm 0.65 1 lines on alt mm 0.1;
+
+Grid schematic_inch;
