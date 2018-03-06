@@ -1,6 +1,6 @@
 # sets the default grids
 
-Grid on;
+# Grid on;
 
 GRID = mm_default mm 1 1 lines on alt mm 0.1;
 GRID = schematic_inch inch 0.1 1 lines on alt inch 0.01;
@@ -11,3 +11,21 @@ GRID = mm_0p8_0p1 mm 0.8 1 lines on alt mm 0.1;
 GRID = mm_0p65 mm 0.65 1 lines on alt mm 0.1;
 
 Grid schematic_inch;
+
+SCH:
+grid off;
+
+LBR:
+grid on;
+
+SYM:
+grid on;
+
+BRD:
+grid on;
+Grid route_mil_50_5;
+
+PAC:
+grid on;
+
+

@@ -218,17 +218,18 @@ SET PALETTE 61 0xC8fFFFFF;
 SET PALETTE 62 0xC8FFFFFF;
 SET PALETTE 63 0xC8FFFFFF;
 
-SCH:
-set palette white;
-
-BRD:
 set palette black;
-
-LBR:
-set palette white;
-
-SYM:
-set palette white;
-
-PAC:
-set palette black;
+# SCH:
+# set palette white;
+# 
+# BRD:
+# set palette black;
+# 
+# LBR:
+# set palette white;
+# 
+# SYM:
+# set palette white;
+# 
+# PAC:
+# set palette black;
